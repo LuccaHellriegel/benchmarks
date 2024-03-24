@@ -2,3 +2,5 @@
 *.rs.bk
 **/target/
 **/dist/
+flamegraph.svg
+perf.data
