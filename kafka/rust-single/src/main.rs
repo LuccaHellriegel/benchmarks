@@ -20,6 +20,7 @@ fn main() {
         .set("bootstrap.servers", "localhost:9092")
         .set("enable.auto.commit", "false")
         .set("auto.offset.reset", "smallest") //mfer this cost me 2 hours because its a default in franz-gp
+        .set("linger.ms", "0")
         // .set_log_level(RDKafkaLogLevel::Debug)
         .create()
         .expect("Consumer creation failed");
