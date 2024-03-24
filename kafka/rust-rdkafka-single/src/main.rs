@@ -15,7 +15,7 @@ use std::time::Instant;
 
 fn main() {
     let producer: BaseProducer = ClientConfig::new()
-        .set("linger.ms", "0")
+        // .set("linger.ms", "0")
         .set("bootstrap.servers", "localhost:9092")
         .create()
         .expect("Producer creation failed");
