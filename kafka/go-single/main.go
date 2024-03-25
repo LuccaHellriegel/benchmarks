@@ -62,6 +62,8 @@ func main() {
 	startTime := time.Now()
 	recordsToCommit := make([]*kgo.Record, 1000)
 	count := 0
+
+	s := time.Now()
 	for {
 		fetches := client.PollRecords(ctx, 1000)
 		if err := fetches.Err(); err != nil {
@@ -84,7 +86,9 @@ func main() {
 
 		count += index
 		if count/10000 > (count-index)/10000 {
-			fmt.Printf("Processed %d\n", count)
+			client.Flush(ctx)
+			fmt.Printf("Processed %d, Elapsed %v \n", count, time.Since(s))
+			s = time.Now()
 		}
 		recordsToCommit = recordsToCommit[:index]
 

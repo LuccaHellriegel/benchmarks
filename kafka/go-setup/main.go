@@ -49,14 +49,17 @@ func main() {
 			Topic: "topicA",
 			Value: message,
 		}
-		res := client.ProduceSync(ctx, record)
-		if res.FirstErr() != nil {
-			panic(fmt.Sprintf("error producing message: %v", res.FirstErr()))
-		}
+		client.Produce(ctx, record, func(r *kgo.Record, err error) {
+			if err != nil {
+				panic(fmt.Sprintf("error producing message: %v", err))
+			}
+		})
 
 		fmt.Printf("Produced %d messages so far\n", i)
 
 	}
+
+	client.Flush(ctx)
 
 	fmt.Printf("Finished producing %d messages\n", messageCount)
 }
