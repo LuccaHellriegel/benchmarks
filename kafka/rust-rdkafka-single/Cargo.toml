@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 chrono = "0.4.35"
 futures = "0.3.30"
+protobuf = "3.4.0"
 rdkafka = "0.36.2"
 
 

@@ -2,7 +2,10 @@ module kafka/go
 
 go 1.20
 
-require github.com/twmb/franz-go v1.16.1
+require (
+	github.com/twmb/franz-go v1.16.1
+	google.golang.org/protobuf v1.33.0
+)
 
 require (
 	github.com/klauspost/compress v1.17.4 // indirect

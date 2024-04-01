@@ -40,14 +40,22 @@ func main() {
 	}()
 
 	// Produce 100000 random messages to topic B
-	const messageCount = 100000
+	const messageCount = 1000000
 	const messageSize = 100 * 1024 // 100KB
 
 	message := make([]byte, messageSize)
+	for i := 0; i < messageSize; i++ {
+		message[i] = 1
+	}
 	for i := 0; i < messageCount; i++ {
 		record := &kgo.Record{
 			Topic: "topicA",
-			Value: message,
+			Key:   message[:30],
+			Value: append(message, []byte("message "+fmt.Sprint(i))...),
+			Headers: []kgo.RecordHeader{
+				{Key: "some_id", Value: []byte(fmt.Sprintf("id-%d", i))},
+				{Key: "message_type", Value: []byte(fmt.Sprintf("type-%d", i))},
+			},
 		}
 		client.Produce(ctx, record, func(r *kgo.Record, err error) {
 			if err != nil {

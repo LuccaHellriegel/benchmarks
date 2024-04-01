@@ -1,0 +1,11 @@
+syntax = "proto3";
+package main;
+
+option go_package = "go-single/main";
+
+message ProtoMessage {
+  string message_type = 1;
+  bytes payload = 2;
+  string some_id = 3;
+  map<string,string> headers = 4;
+}

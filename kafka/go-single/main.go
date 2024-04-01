@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/twmb/franz-go/pkg/kgo"
+	"google.golang.org/protobuf/proto"
 )
 
 func main() {
@@ -16,7 +17,7 @@ func main() {
 		kgo.ConsumerGroup(time.Now().String()), //send all msgs each time
 		kgo.SeedBrokers("localhost:9092"),
 		kgo.ConsumeTopics("topicA"),
-		kgo.DisableAutoCommit(),
+		// kgo.DisableAutoCommit(),
 		kgo.RequireStableFetchOffsets(),
 		// kgo.FetchMinBytes(1e6),
 		kgo.AllowAutoTopicCreation(),
@@ -49,9 +50,14 @@ func main() {
 	}()
 
 	// Produce to topic B
-	produceToTopicB := func(ctx context.Context, record *kgo.Record) {
+	produceToTopicB := func(ctx context.Context, record kgo.Record) {
 		record.Topic = "topicB"
-		client.Produce(ctx, record, func(r *kgo.Record, err error) {
+		m := createMessageFromKafkaRecord(record.Value, record.Headers)
+		payload, err := proto.Marshal(m)
+		if err != nil {
+			panic(err)
+		}
+		client.Produce(ctx, &kgo.Record{Topic: "topicB", Key: record.Key, Value: payload}, func(r *kgo.Record, err error) {
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "error in produce: %v\n", err)
 				panic("error in produce")
@@ -60,7 +66,6 @@ func main() {
 	}
 
 	startTime := time.Now()
-	recordsToCommit := make([]*kgo.Record, 1000)
 	count := 0
 
 	s := time.Now()
@@ -76,8 +81,7 @@ func main() {
 			for _, topic := range fetch.Topics {
 				for _, partition := range topic.Partitions {
 					for _, record := range partition.Records {
-						produceToTopicB(ctx, record)
-						recordsToCommit[index] = record
+						produceToTopicB(ctx, *record)
 						index++
 					}
 				}
@@ -85,23 +89,12 @@ func main() {
 		}
 
 		count += index
-		if count/10000 > (count-index)/10000 {
-			client.Flush(ctx)
+		if count/100000 > (count-index)/100000 {
 			fmt.Printf("Processed %d, Elapsed %v \n", count, time.Since(s))
 			s = time.Now()
 		}
-		recordsToCommit = recordsToCommit[:index]
 
-		// Commit all records after producing
-		if len(recordsToCommit) > 0 {
-			client.MarkCommitRecords(recordsToCommit...)
-			if err := client.CommitMarkedOffsets(ctx); err != nil {
-				panic(err)
-			}
-			recordsToCommit = make([]*kgo.Record, 1000)
-		}
-
-		if count == 100000 {
+		if count == 1000000 {
 			client.Flush(ctx)
 			break
 		}
@@ -111,4 +104,30 @@ func main() {
 	elapsedTime := time.Since(startTime)
 	fmt.Printf("Fetch and produce operation took %v\n", elapsedTime)
 	cancel() // Ensure context is cancelled to stop any ongoing operations
+}
+
+func createMessageFromKafkaRecord(payload []byte, headers []kgo.RecordHeader) *ProtoMessage {
+	msg := &ProtoMessage{
+		Payload: payload,
+		Headers: make(map[string]string),
+	}
+
+	for _, header := range headers {
+		key := string(header.Key)
+		value := string(header.Value)
+		switch key {
+		case "message_type":
+			msg.MessageType = value
+		case "some_id":
+			msg.SomeId = value
+		default:
+			msg.Headers[key] = value
+		}
+	}
+
+	if msg.SomeId == "" || msg.MessageType == "" {
+		panic("problem with incoming data")
+	}
+
+	return msg
 }
