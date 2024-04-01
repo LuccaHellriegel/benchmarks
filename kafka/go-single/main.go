@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 	"time"
 
@@ -49,28 +50,20 @@ func main() {
 		cancel()
 	}()
 
-	// Produce to topic B
-	produceToTopicB := func(ctx context.Context, record kgo.Record) {
-		record.Topic = "topicB"
-		m := createMessageFromKafkaRecord(record.Value, record.Headers)
-		payload, err := proto.Marshal(m)
-		if err != nil {
-			panic(err)
-		}
-		client.Produce(ctx, &kgo.Record{Topic: "topicB", Key: record.Key, Value: payload}, func(r *kgo.Record, err error) {
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "error in produce: %v\n", err)
-				panic("error in produce")
-			}
-		})
-	}
+	recordChan := make(chan *kgo.Record, 10000)
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		produceToTopicB(ctx, client, recordChan)
+		wg.Done()
+	}()
 
 	startTime := time.Now()
 	count := 0
 
 	s := time.Now()
 	for {
-		fetches := client.PollRecords(ctx, 1000)
+		fetches := client.PollFetches(ctx)
 		if err := fetches.Err(); err != nil {
 			fmt.Fprintf(os.Stderr, "error in fetch: %v\n", err)
 			panic("error in fetch")
@@ -81,7 +74,7 @@ func main() {
 			for _, topic := range fetch.Topics {
 				for _, partition := range topic.Partitions {
 					for _, record := range partition.Records {
-						produceToTopicB(ctx, *record)
+						recordChan <- record
 						index++
 					}
 				}
@@ -94,16 +87,34 @@ func main() {
 			s = time.Now()
 		}
 
-		if count == 1000000 {
-			client.Flush(ctx)
+		if count == 1_000_000 {
+			close(recordChan)
+			wg.Wait()
 			break
 		}
-
 	}
 
 	elapsedTime := time.Since(startTime)
 	fmt.Printf("Fetch and produce operation took %v\n", elapsedTime)
 	cancel() // Ensure context is cancelled to stop any ongoing operations
+}
+
+func produceToTopicB(ctx context.Context, client *kgo.Client, recordChan <-chan *kgo.Record) {
+	for record := range recordChan {
+		m := createMessageFromKafkaRecord(record.Value, record.Headers)
+		payload, err := proto.Marshal(m)
+		if err != nil {
+			panic(err)
+		}
+		client.Produce(ctx, &kgo.Record{Topic: "topicB", Key: record.Key, Value: payload}, func(r *kgo.Record, err error) {
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "error in produce: %v\n", err)
+				panic("error in produce")
+			}
+		})
+	}
+	client.Flush(ctx)
+
 }
 
 func createMessageFromKafkaRecord(payload []byte, headers []kgo.RecordHeader) *ProtoMessage {

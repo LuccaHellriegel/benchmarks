@@ -1,3 +1,4 @@
+docker compose down -v
 mkdir -p /tmp/zoo/data
 mkdir -p /tmp/zoo/log
 sudo rm -rf /tmp/zoo/data/*

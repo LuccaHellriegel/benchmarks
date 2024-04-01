@@ -22,6 +22,7 @@ fn main() {
         let producer: ThreadedProducer<DefaultProducerContext, NoCustomPartitioner> =
             ClientConfig::new()
                 .set("bootstrap.servers", "localhost:9092")
+                .set("linger.ms", "0") //franz-go default
                 .set("compression.codec", "snappy") //franz-go has snappy compression by default, which is why it was much faster, fml
                 .create()
                 .expect("Producer creation failed");
