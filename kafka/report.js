@@ -217,11 +217,10 @@ function prettyPrintCombinedResultAsMarkdownTable(result) {
   }
 
   // Replace the content under the heading "#### Metrics" in the README.md with this markdown table output
-  const readmePath = path.join(__dirname, "README.md");
-  let readmeContent = fs.readFileSync(readmePath, "utf8");
+  let readmeContent = fs.readFileSync("../README.md", "utf8");
   readmeContent = readmeContent.replace(
     /(#### Metrics\n\n)[\s\S]*/,
     `$1${markdownTable}`
   );
-  fs.writeFileSync(readmePath, readmeContent);
+  fs.writeFileSync("../README.md", readmeContent);
 }

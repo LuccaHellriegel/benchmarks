@@ -26,15 +26,15 @@ Go CPU is around 88-100, Rust is around 80-85.
 
 #### Metrics
 
-| Command     | Metric             | Min       | Max       | Mean      | Median    |
-| ----------- | ------------------ | --------- | --------- | --------- | --------- |
-| rust-single | userTime           | 151.19    | 167.87    | 157.01    | 151.96    |
-| go-single   | userTime           | 231.73    | 234.53    | 233.13    | 233.13    |
-| rust-single | systemTime         | 103.70    | 116.47    | 109.12    | 107.20    |
-| go-single   | systemTime         | 89.95     | 91.28     | 90.62     | 90.62     |
-| rust-single | percentCPU         | 84.00     | 85.00     | 84.67     | 85.00     |
-| go-single   | percentCPU         | 96.00     | 101.00    | 98.50     | 98.50     |
-| rust-single | elapsedTime        | 298.15    | 338.42    | 313.07    | 302.65    |
-| go-single   | elapsedTime        | 318.92    | 336.28    | 327.60    | 327.60    |
+| Command | Metric | Min | Max | Mean | Median |
+| --- | --- | --- | --- | --- | --- |
+| rust-single | userTime | 151.19 | 167.87 | 157.01 | 151.96 |
+| go-single | userTime | 231.73 | 234.53 | 233.13 | 233.13 |
+| rust-single | systemTime | 103.70 | 116.47 | 109.12 | 107.20 |
+| go-single | systemTime | 89.95 | 91.28 | 90.62 | 90.62 |
+| rust-single | percentCPU | 84.00 | 85.00 | 84.67 | 85.00 |
+| go-single | percentCPU | 96.00 | 101.00 | 98.50 | 98.50 |
+| rust-single | elapsedTime | 298.15 | 338.42 | 313.07 | 302.65 |
+| go-single | elapsedTime | 318.92 | 336.28 | 327.60 | 327.60 |
 | rust-single | maxResidentSetSize | 483284.00 | 629160.00 | 540738.67 | 509772.00 |
-| go-single   | maxResidentSetSize | 384384.00 | 505656.00 | 445020.00 | 445020.00 |
+| go-single | maxResidentSetSize | 384384.00 | 505656.00 | 445020.00 | 445020.00 |
