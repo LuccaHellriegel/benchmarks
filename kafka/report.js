@@ -81,9 +81,11 @@ function report(arrOfCommandObjects) {
     return { min, max, mean, median };
   };
 
+  let c = 0;
   // Aggregate data by command
   arrOfCommandObjects.forEach((obj) => {
     const command = obj["Command being timed"];
+    c++;
     if (!commandStats[command]) {
       commandStats[command] = {
         userTime: [],
@@ -122,6 +124,7 @@ function report(arrOfCommandObjects) {
     };
   }
 
+  console.log("Command count: " + c);
   return statsReport;
 }
 
