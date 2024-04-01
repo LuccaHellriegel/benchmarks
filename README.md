@@ -24,6 +24,8 @@ Setting linger.ms to 0 for Rust increased the mem usage of Rust by like 200mb, n
 
 Go CPU is around 88-100, Rust is around 80-85.
 
+#### Metrics
+
 | Command     | Metric             | Min       | Max       | Mean      | Median    |
 | ----------- | ------------------ | --------- | --------- | --------- | --------- |
 | rust-single | userTime           | 151.19    | 167.87    | 157.01    | 151.96    |

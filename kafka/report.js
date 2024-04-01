@@ -177,11 +177,8 @@ function prettyPrintCombinedResultAsTable(result) {
 
 function prettyPrintCombinedResultAsMarkdownTable(result) {
   const headers = ["Command", "Metric", "Min", "Max", "Mean", "Median"];
-
-  // Create a header row
-  const headerRow = headers.join(" | ");
-  console.log(`| ${headerRow} |`);
-  console.log(`| ${headers.map(() => "---").join(" | ")} |`);
+  let markdownTable = `| ${headers.join(" | ")} |\n`;
+  markdownTable += `| ${headers.map(() => "---").join(" | ")} |\n`;
 
   // Collect all metrics for each command
   const metricsByType = {};
@@ -215,7 +212,16 @@ function prettyPrintCombinedResultAsMarkdownTable(result) {
         metricData.median,
       ].join(" | ");
 
-      console.log(`| ${row} |`);
+      markdownTable += `| ${row} |\n`;
     });
   }
+
+  // Replace the content under the heading "#### Metrics" in the README.md with this markdown table output
+  const readmePath = path.join(__dirname, "README.md");
+  let readmeContent = fs.readFileSync(readmePath, "utf8");
+  readmeContent = readmeContent.replace(
+    /(#### Metrics\n\n)[\s\S]*/,
+    `$1${markdownTable}`
+  );
+  fs.writeFileSync(readmePath, readmeContent);
 }
