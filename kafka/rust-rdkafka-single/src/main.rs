@@ -71,7 +71,7 @@ fn main() {
                 let m = m.unwrap();
                 let payload = m.payload().unwrap().to_vec();
                 let key = m.key().unwrap_or(&[]).to_vec();
-                let headers = m.headers().map(|h| h.detach()).clone();
+                let headers = m.headers().map(|h| h.detach());
                 tx.send((key, payload, headers)).unwrap();
             }
         };

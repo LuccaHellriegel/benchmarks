@@ -55,6 +55,7 @@ func main() {
 			Headers: []kgo.RecordHeader{
 				{Key: "some_id", Value: []byte(fmt.Sprintf("id-%d", i))},
 				{Key: "message_type", Value: []byte(fmt.Sprintf("type-%d", i))},
+				{Key: "additional_header", Value: []byte(fmt.Sprintf("additional-%d", i))},
 			},
 		}
 		client.Produce(ctx, record, func(r *kgo.Record, err error) {
