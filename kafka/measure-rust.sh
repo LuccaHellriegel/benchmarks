@@ -1,4 +1,4 @@
 (cd ./go-setup && go run .) &
-cd ./rust-rdkafka-single && ./measure.sh >>../log.txt
+cd ./rust-rdkafka-single && ./measure.sh
 cd ..
 wait

@@ -64,7 +64,9 @@ func main() {
 			}
 		})
 
-		fmt.Printf("Produced %d messages so far\n", i)
+		if (i+1)%100000 == 0 {
+			fmt.Printf("Produced %d messages so far\n", i+1)
+		}
 
 	}
 

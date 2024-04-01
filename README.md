@@ -17,7 +17,12 @@ measure-xx.sh starts up the message production and the application and prints ti
 ### Result
 
 Memory usage depends on how many messages need to be buffered - either currently consuming or producing.
-Setting linger.ms to 0 for Rust increased the mem usage of Rust by like 200mb.
+
+Go is all over the place, 500-1200mb, GC?
+
+Setting linger.ms to 0 for Rust increased the mem usage of Rust by like 200mb, network overhead?
+
+Go CPU is around 88-100, Rust is around 80-85.
 
 #### 1 Mil - Go
 
@@ -25,12 +30,12 @@ Command being timed: "./dist/go-single"
 User time (seconds): 234.53
 System time (seconds): 89.95
 Percent of CPU this job got: 96%
-Elapsed (wall clock) time (h:mm:ss or m:ss): 5:36.28
+Elapsed (wall clock) time (h:mm:ss or m:ss): 5:36.28 / 5:38.30
 Average shared text size (kbytes): 0
 Average unshared data size (kbytes): 0
 Average stack size (kbytes): 0
 Average total size (kbytes): 0
-Maximum resident set size (kbytes): 505656
+Maximum resident set size (kbytes): 505656 / 1139652
 Average resident set size (kbytes): 0
 Major (requiring I/O) page faults: 0
 Minor (reclaiming a frame) page faults: 14101075
@@ -51,12 +56,12 @@ Command being timed: "./dist/release/rust-single"
 User time (seconds): 151.19
 System time (seconds): 107.20
 Percent of CPU this job got: 85%
-Elapsed (wall clock) time (h:mm:ss or m:ss): 5:02.65
+Elapsed (wall clock) time (h:mm:ss or m:ss): 5:02.65 / 6:04.40 / 5:31.93
 Average shared text size (kbytes): 0
 Average unshared data size (kbytes): 0
 Average stack size (kbytes): 0
 Average total size (kbytes): 0
-Maximum resident set size (kbytes): 509772
+Maximum resident set size (kbytes): 509772 / 448988 / 273920
 Average resident set size (kbytes): 0
 Major (requiring I/O) page faults: 0
 Minor (reclaiming a frame) page faults: 27189437
