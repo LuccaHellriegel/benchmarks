@@ -1,8 +1,11 @@
 import time
+import os
 
 print("Python")
 
 upper_limit = int(os.getenv("UPPER_LIMIT"))
+if upper_limit == 0:
+    raise ValueError("no limit")
 start_time = time.time()
 
 data = []
