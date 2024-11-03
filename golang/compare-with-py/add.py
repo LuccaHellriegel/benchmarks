@@ -2,15 +2,16 @@ import time
 
 print("Python")
 
+upper_limit = int(os.getenv("UPPER_LIMIT"))
 start_time = time.time()
 
 data = []
-for i in range(1000):
+for i in range(upper_limit):
     data.append(i)
 
 res = 0
 for d in data:
-    res += d * 2
+    res += d
 
 end_time = time.time()
 print("Result:", res)

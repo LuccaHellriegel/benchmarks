@@ -3,13 +3,14 @@ import numpy as np
 
 print("Python")
 
+upper_limit = int(os.getenv("UPPER_LIMIT"))
 start_time = time.time()
 
 # Creating an array using NumPy for faster computation
-data = np.arange(1000)
+data = np.arange(upper_limit)
 
 # Directly using NumPy operations for summing doubles
-res = np.sum(data * 2)
+res = np.sum(data)
 
 end_time = time.time()
 
