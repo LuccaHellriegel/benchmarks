@@ -55,18 +55,24 @@ def run(limit):
 
     python_results = run_command("/usr/bin/time -v python3 add.py")
     print("\nPython Naive:")
-    for key in go_results:
-        print(f"{key}: {(python_results[key] / go_results[key]):.1f}x")
+    for key, value in python_results.items():
+        print(f"{key}: {value}")
+    # for key in go_results:
+    #     print(f"{key}: {(python_results[key] / go_results[key]):.1f}x")
 
     python_results = run_command("/usr/bin/time -v python3 add_idio.py")
     print("\nPython Idiomatic:")
-    for key in go_results:
-        print(f"{key}: {(python_results[key] / go_results[key]):.1f}x")
+    for key, value in python_results.items():
+        print(f"{key}: {value}")
+    # for key in go_results:
+    #     print(f"{key}: {(python_results[key] / go_results[key]):.1f}x")
 
     python_results = run_command("/usr/bin/time -v python3 add_np.py")
     print("\nPython Numpy:")
-    for key in go_results:
-        print(f"{key}: {(python_results[key] / go_results[key]):.1f}x")
+    for key, value in python_results.items():
+        print(f"{key}: {value}")
+    # for key in go_results:
+    #     print(f"{key}: {(python_results[key] / go_results[key]):.1f}x")
 
 
 run(100)
