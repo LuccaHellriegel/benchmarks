@@ -2,7 +2,7 @@ import subprocess
 import time
 
 
-def run_command(command, n=1000):
+def run_command(command, n=25):
     total_real_time = 0
     total_resident_set_size = 0
     total_custom_execution_time = (
@@ -52,7 +52,7 @@ def run_command(command, n=1000):
 
 
 # Build the Go binary
-subprocess.run("go build -o add", shell=True, check=True)
+subprocess.run("cd ./add-go/ && go build -o add && cd ..", shell=True, check=True)
 
 # Execute and average results for the Go program
 go_results = run_command("/usr/bin/time -v ./add")
@@ -62,10 +62,32 @@ for key, value in go_results.items():
 
 # Execute and average results for the Python script
 python_results = run_command("/usr/bin/time -v python3 add.py")
-print("\nPython Script Results:")
-for key, value in python_results.items():
-    print(f"{key}: {value}")
+# print("\nPython Script Results:")
+# for key, value in python_results.items():
+#     print(f"{key}: {value}")
 
-print("\nPercentage Differences (Python vs Go):")
+print("\nDiff(Python vs Go):")
+for key in go_results:
+    print(f"{key}: {(python_results[key] / go_results[key]):.1f}x")
+
+
+# Execute and average results for the Python script
+python_results = run_command("/usr/bin/time -v python3 add_idiomatic.py")
+# print("\nPython Idiomatic Script Results:")
+# for key, value in python_results.items():
+#     print(f"{key}: {value}")
+
+print("\nDiff(Python Idiomatic vs Go):")
+for key in go_results:
+    print(f"{key}: {(python_results[key] / go_results[key]):.1f}x")
+
+
+# Execute and average results for the Python script
+python_results = run_command("/usr/bin/time -v python3 add_np.py")
+# print("\nPython Numpy Script Results:")
+# for key, value in python_results.items():
+#     print(f"{key}: {value}")
+
+print("\nDiff(Python Numpy vs Go):")
 for key in go_results:
     print(f"{key}: {(python_results[key] / go_results[key]):.1f}x")
